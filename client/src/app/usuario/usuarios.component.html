@@ -1,0 +1,147 @@
+<div class="br-mainpanel">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">Usuarios</h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row row-sm">
+            <div class="col-lg-6">
+                <div class="card card-default mb-3">
+                    <div class="card-header">
+                        <div>
+                            <a>
+                                <strong style="text-decoration: none;color: #333;">Administración de Usuarios</strong>
+                            </a>
+                            <button pButton *ngIf="checkPermission(['admin'])" class="ui-button-rounded float-right" label="Nuevo Usuario"
+                                icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarUsuario">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                            <p-table  [responsive]="true"#dt [columns]="colsUsuarios" [value]="usuarios" selectionMode="single"
+                            [(selection)]="selectedUsuario"  [paginator]="true" [rows]="12">
+                            <ng-template pTemplate="caption">
+                                <div style="text-align: right">
+                                    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                    <input type="text" pInputText size="50" placeholder="Filtro"
+                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                        style="width:auto">
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                        <input *ngSwitchCase="'firstName'" pInputText type="text"
+                                            (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                            style="width:100%">
+                                        <input *ngSwitchCase="'lastName'" pInputText type="text"
+                                            (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                            style="width:100%">
+                                        <input *ngSwitchCase="'username'" pInputText type="text"
+                                            (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                            style="width:100%">
+                                    </th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-usuarios let-columns="columns">
+                                <tr [pSelectableRow]="usuarios">
+                                    <td *ngFor="let col of columns">
+                                        {{usuarios[col.field]}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-default mb-3">
+                    <div class="card-header">
+                        <div>
+                            <a>
+                                <strong style="text-decoration: none;color: #333;">Administración de Permisos</strong>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nuevo Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="f.form.valid 
+                    && nombre
+                    && apellido
+                    && username
+                    && password
+                    
+                    && cargarUsuario(f);" #f="ngForm" novalidate>
+                    <div class="modal-body">
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="name">Nombre:</label>
+                            <input type="text" class="form-control" name="name" [(ngModel)]="nombre"
+                                #name="ngModel" autocomplete="off" required (ngModelChange)="generarUsername()"/>
+                            <p-message *ngIf="f.submitted && !nombre" severity="error" text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="ape">Apellido:</label>
+                            <input type="text" class="form-control" name="ape" [(ngModel)]="apellido"
+                                #ape="ngModel" autocomplete="off" required (ngModelChange)="generarUsername()"/>
+                            <p-message *ngIf="f.submitted && !apellido" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label" for="userna">Usuario:</label>
+                            <input type="text" class="form-control" name="userna" [(ngModel)]="username"
+                                #userna="ngModel" autocomplete="off" required disabled/>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="pass">Contraseña:</label>
+                            <input type="password" class="form-control" name="pass" [(ngModel)]="password"
+                                #pass="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !password" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                            type="submit">
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

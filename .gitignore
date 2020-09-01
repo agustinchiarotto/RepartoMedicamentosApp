@@ -1,0 +1,12 @@
+/node_modules
+/api
+
+npm-debug\.log
+
+\.idea/
+
+client/package-lock\.json
+
+package-lock\.json
+logs
+data/settings

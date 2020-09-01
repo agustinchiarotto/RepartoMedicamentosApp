@@ -1,0 +1,251 @@
+<div [@routerTransition]>
+    <div class="br-mainpanel">
+        <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+            <h4 class="tx-gray-800 mg-b-5">Repartidores</h4>
+        </div>
+
+        <div class="br-pagebody pd-x-20 pd-sm-x-30">
+            <div class="row row-sm">
+                <div class="col-lg-12">
+                    <div class="card card-default mb-3">
+                        <div class="card-header">
+                            <div>
+                                <a>
+                                    <strong style="text-decoration: none;color: #333;">Administración de Repartidores</strong>
+                                    <div class='pull-left'>
+                                    </div>
+                                </a>
+                                <button pButton class="ui-button-rounded float-right" label="Nuevo Repartidor"
+                                    icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarRepartidor">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p-table [responsive]="true" #dt [columns]="cols" [value]="repartidores" selectionMode="single" [(selection)]="selectedRepartidor" [paginator]="true" [rows]="12">
+                                <ng-template pTemplate="caption">
+                                    <div style="text-align: right">
+                                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                        <input type="text" pInputText size="50" placeholder="Filtro"
+                                            (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                            style="width:auto">
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns">
+                                            {{col.header}}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                            <input *ngSwitchCase="'dni'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                            <input *ngSwitchCase="'apellido'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                            <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                            <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                            <input *ngSwitchCase="'legajo'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+
+                                        </th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-repartidor let-columns="columns">
+                                    <tr [pSelectableRow]="repartidor">
+                                        <td *ngFor="let col of columns">
+                                            {{repartidor[col.field]}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="pull-right">
+                                <!--Boton Editar (Deshabilitado)-->
+                                <button pButton *ngIf="!selectedRepartidor" class="ui-button-rounded ui-button-warning"
+                                    label="Editar" icon="fas fa-pencil-alt" disabled>
+                                </button>
+
+                                <!--Boton Editar (Habilitado)-->
+                                <button pButton *ngIf="selectedRepartidor" class="ui-button-rounded ui-button-warning"
+                                    label="Editar" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#"
+                                    data-toggle="modal" data-target="#modalEditarRepartidor">
+                                </button>
+
+                                &nbsp;
+
+                                <!--Boton Eliminar (Deshabilitado)-->
+                                <button pButton *ngIf="!selectedRepartidor" class="ui-button-rounded ui-button-danger"
+                                    label="Eliminar" icon="fas fa-times" disabled>
+                                </button>
+
+                                <!--Boton Eliminar (Habilitado)-->
+                                <button pButton *ngIf="selectedRepartidor" class="ui-button-rounded ui-button-danger"
+                                    label="Eliminar" icon="fas fa-times" data-toggle="modal" data-target="#"
+                                    (click)="eliminarRepartidor()">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL AGREGAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalAgregarRepartidor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Repartidor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="f.form.valid 
+                && model.dni 
+                && model.nombre
+                && model.apellido
+                && model.telefono 
+                && model.legajo
+                
+                && cargarRepartidor(f);" #f="ngForm" novalidate autocomplete="off">
+                <div class="modal-body">
+
+                    <div class="form-group required">
+                        <label class="control-label" for="dni">DNI:</label>
+                        <input type="text" class="form-control" name="dni" [(ngModel)]="model.dni"
+                            #dni="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.dni" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="nombre">Nombre:</label>
+                        <input type="text" class="form-control" name="nombre" [(ngModel)]="model.nombre"
+                            #nombre="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.nombre" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="apellido">Apellido:</label>
+                        <input type="text" class="form-control" name="apellido" [(ngModel)]="model.apellido"
+                            #apellido="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.apellido" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="telefono">Telefono:</label>
+                        <input type="text" class="form-control" name="telefono"
+                            [(ngModel)]="model.telefono" #telefono="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !model.telefono" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="legajo">Legajo:</label>
+                        <input type="number" class="form-control" name="legajo"
+                            [(ngModel)]="model.legajo" #legajo="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !model.legajo" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL EDITAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalEditarRepartidor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" *ngIf="selectedRepartidor"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Repartidor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarEditar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="f.form.valid 
+                && selectedRepartidor.dni
+                && selectedRepartidor.nombre
+                && selectedRepartidor.apellido
+                && selectedRepartidor.telefono 
+                && selectedRepartidor.legajo
+                
+                && editarRepartidor(f);" #f="ngForm" novalidate autocomplete="off">
+                <div class="modal-body">
+
+                    <div class="form-group required">
+                        <label class="control-label" for="dni">DNI:</label>
+                        <input type="text" class="form-control" name="dni" [(ngModel)]="selectedRepartidor.dni"
+                            #dni="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedRepartidor.dni" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="nombre">Nombre:</label>
+                        <input type="text" class="form-control" name="nombre" [(ngModel)]="selectedRepartidor.nombre"
+                            #nombre="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedRepartidor.nombre" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="apellido">Apellido:</label>
+                        <input type="text" class="form-control" name="apellido" [(ngModel)]="selectedRepartidor.apellido"
+                            #apellido="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedRepartidor.apellido" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="telefono">Telefono:</label>
+                        <input type="text" class="form-control" name="telefono"
+                            [(ngModel)]="selectedRepartidor.telefono" #telefono="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !selectedRepartidor.telefono" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="legajo">Legajo:</label>
+                        <input type="number" class="form-control" name="legajo"
+                            [(ngModel)]="selectedRepartidor.legajo" #legajo="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !selectedRepartidor.legajo" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="br-mainpanel" *ngIf="conteo">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">RESUMEN DE PEDIDOS</h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row row-sm">
+            <div class="row">
+                    <div class="bg-warning rounded overflow-hidden">
+                            <div class="pd-25 d-flex align-items-center">
+                                <i class="fas fa-clock fa-6x"  style="color:white"></i>
+                                <div class="mg-l-20">
+                                    <h6 class="tx-spacing-1 tx-mont tx-medium tx-uppercase tx-white-8 mg-b-10">Generados</h6>
+                                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1">{{conteo.generados}}</p>
+                                </div>
+                            </div>
+                        </div>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <div class="bg-br-primary rounded overflow-hidden">
+                        <div class="pd-25 d-flex align-items-center">
+                            <i class="fas fa-file-signature fa-6x"  style="color:white"></i>
+                            <div class="mg-l-20">
+                                <h6 class="tx-spacing-1 tx-mont tx-medium tx-uppercase tx-white-8 mg-b-10">En Proceso</h6>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1">{{conteo.enProceso}}</p>
+                            </div>
+                        </div>
+                    </div>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                
+                <div class="bg-primary rounded overflow-hidden">
+                        <div class="pd-25 d-flex align-items-center">
+                            <i class="fas fa-truck-loading fa-6x"  style="color:white"></i>
+                            <div class="mg-l-20">
+                                <h6 class="tx-spacing-1 tx-mont tx-medium tx-uppercase tx-white-8 mg-b-10">Retirados</h6>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1">{{conteo.retirados}}</p>
+                            </div>
+                        </div>
+                    </div>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <div class="bg-danger rounded overflow-hidden">
+                    <div class="pd-25 d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-6x"  style="color:white"></i>
+                        <div class="mg-l-20">
+                            <h6 class="tx-spacing-1 tx-mont tx-medium tx-uppercase tx-black-8 mg-b-10">Pendientes</h6>
+                            <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1">{{conteo.pendientes}}</p>
+                        </div>
+                    </div>
+                </div>
+            &nbsp;
+            &nbsp;
+            &nbsp;
+                <div class="bg-teal rounded overflow-hidden">
+                    <div class="pd-25 d-flex align-items-center">
+                        <i class="fas fa-grin-stars fa-6x"  style="color:white"></i>
+                        <div class="mg-l-20">
+                            <h6 class="tx-spacing-1 tx-mont tx-medium tx-uppercase tx-white-8 mg-b-10">Entregados</h6>
+                            <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1">{{conteo.entregados}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

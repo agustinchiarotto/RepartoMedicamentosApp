@@ -1,0 +1,133 @@
+<div class="br-mainpanel"  *ngIf="paciente">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">Paciente: {{paciente.nombre}} {{paciente.apellido}} - {{paciente.dni}}
+                <button pButton
+                label="Atras"
+                icon="fas fa-arrow-circle-left"
+                class="ui-button-rounded ui-button-secondary float-right"
+                [routerLink]="['/pacientes']"
+            >
+            </button>
+        </h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row">
+            <p-tabView>
+                <p-tabPanel header="Detalle">                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>DNI</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" type="text" [(ngModel)]='paciente.dni' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.dni' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombre</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='paciente.nombre' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.nombre' class='form-control'>
+                                    </td>
+                                </tr>            
+                                <tr>
+                                    <td><strong>Apellido</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='paciente.apellido' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.apellido' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha Nacimiento</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" value="{{paciente.fechaNacimiento | date: 'dd/MM/yyyy' : '+1'}}" class='form-control' disabled>
+                                        <input *ngIf="editar" type="date" [(ngModel)]='paciente.fechaNacimiento' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefono</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='paciente.telefono' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.telefono' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Direccion</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='paciente.direccion' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.direccion' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Barrio</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='paciente.barrio' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='paciente.barrio' class='form-control'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    <!-- BOTON ELIMINAR -->
+                                        <button *ngIf="!editar"
+                                            pButton
+                                            label="Eliminar"
+                                            icon="fas fa-times"
+                                            class="ui-button-danger ui-button-raised ui-button-rounded float-right"
+                                            (click)="eliminarPaciente()"
+                                        >   
+                                        </button>
+
+                                    <!-- BOTON EDITAR -->
+                                        <button *ngIf="!editar"
+                                            pButton
+                                            label="Editar"
+                                            icon="fas fa-pencil-alt"
+                                            class="ui-button-warning ui-button-raised ui-button-rounded float-right"
+                                            (click)="toggleEditar()"
+                                        >   
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar"
+                                            pButton
+                                            label="Guardar"
+                                            icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right"
+                                            (click)="actualizarPaciente()"
+                                        >   
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Medicos">
+                    <app-asignar-medico
+                        [idPaciente]='paciente._id'
+                        [medicosPaciente]='paciente.medicos'
+                    >
+                    </app-asignar-medico>
+                </p-tabPanel>
+                <p-tabPanel header="Obras Sociales">
+                    <app-asignar-obra-social
+                        [idPaciente]='paciente._id'
+                        [obrasPaciente]='paciente.obras'
+                    >
+                    </app-asignar-obra-social>
+                </p-tabPanel>
+                <p-tabPanel header="Consumiciones">
+                    <app-asignar-consumicion
+                        [idPaciente]='paciente._id'
+                        [consumicionesPaciente]='paciente.consumiciones'
+                    >
+                    </app-asignar-consumicion>
+                </p-tabPanel>
+                
+            </p-tabView>
+        </div>
+    </div>
+</div>

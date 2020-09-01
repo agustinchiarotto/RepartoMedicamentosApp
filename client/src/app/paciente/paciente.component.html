@@ -1,0 +1,285 @@
+<div [@routerTransition]>
+    <div class="br-mainpanel">
+        <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+            <h4 class="tx-gray-800 mg-b-5">Pacientes</h4>
+        </div>
+
+        <div class="br-pagebody pd-x-20 pd-sm-x-30">
+            <div class="row row-sm">
+                <div class="col-lg-12">
+                    <div class="card card-default mb-3">
+                        <div class="card-header">
+                            <div>
+                                <a>
+                                    <strong style="text-decoration: none;color: #333;">Administración de
+                                        Pacientes</strong>
+                                    <div class='pull-left'>
+                                    </div>
+                                </a>
+                                <button pButton class="ui-button-rounded float-right" label="Nuevo Paciente"
+                                    icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarPaciente">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p-table [responsive]="true" #dt [columns]="cols" [value]="pacientes" selectionMode="single"
+                                [(selection)]="selectedPaciente" [paginator]="true" [rows]="12">
+                                <ng-template pTemplate="caption">
+                                    <div style="text-align: right">
+                                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                        <input type="text" pInputText size="50" placeholder="Filtro"
+                                            (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                            style="width:auto">
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns">
+                                            {{col.header}}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                            <input *ngSwitchCase="'dni'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'apellido'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'direccion'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'barrio'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'fechaNacimiento'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+
+                                        </th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-paciente let-columns="columns">
+                                    <tr [pSelectableRow]="paciente">
+                                        <td *ngFor="let col of columns">
+                                            <div *ngIf='paciente[col.field] && col.field=="fechaNacimiento"'>
+                                                {{paciente[col.field] | date: 'dd/MM/yyyy'}}
+                                            </div>
+                                            <div *ngIf='paciente[col.field] && col.field!="fechaNacimiento"'>
+                                                {{paciente[col.field]}}
+                                            </div>
+                                            
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+
+
+                        </div>
+                        <div class="card-footer">
+                            <div class="float-right">
+                                <!-- (deshabilitado) -->
+                                <button *ngIf="!selectedPaciente"
+                                    disabled
+                                    pButton
+                                    label="Detalle"
+                                    icon="fas fa-search"
+                                    class="ui-button-success ui-button-raised ui-button-rounded"
+                                >   
+                                </button>
+                                <!-- (habilitado) -->
+                                <button *ngIf="selectedPaciente"
+                                        pButton
+                                        label="Detalle"
+                                        icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded"
+                                        [routerLink]="['/paciente', selectedPaciente._id]"
+                                >   
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL AGREGAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalAgregarPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Paciente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form name="form"
+                (ngSubmit)="f.form.valid 
+                && model.dniPaciente && model.nombrePaciente
+                && model.apellidoPaciente && model.telefonoPaciente
+                && model.direccionPaciente && model.barrioPaciente
+                && model.fechaNacimientoPaciente 
+                
+                && cargarPaciente(f);"
+                #f="ngForm" novalidate>
+                <div class="modal-body">
+
+                    <div class="form-group required">
+                        <label class="control-label" for="dniPaciente">DNI:</label>
+                        <input type="text" class="form-control" name="dniPaciente" [(ngModel)]="model.dniPaciente"
+                            #dniPaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.dniPaciente" severity="error" text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="nombrePaciente">Nombre:</label>
+                        <input type="text" class="form-control" name="nombrePaciente" [(ngModel)]="model.nombrePaciente"
+                            #nombrePaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.nombrePaciente" severity="error" text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="apellidoPaciente">Apellido:</label>
+                        <input type="text" class="form-control" name="apellidoPaciente"
+                            [(ngModel)]="model.apellidoPaciente" #apellidoPaciente="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !model.apellidoPaciente" severity="error" text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="telefonoPaciente">Telefono:</label>
+                        <input type="text" class="form-control" name="telefonoPaciente"
+                            [(ngModel)]="model.telefonoPaciente" #telefonoPaciente="ngModel" autocomplete="off"
+                            required />
+                            <p-message *ngIf="f.submitted && !model.telefonoPaciente" severity="error" text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="direccionPaciente">Direccion:</label>
+                        <input type="text" class="form-control" name="direccionPaciente"
+                            [(ngModel)]="model.direccionPaciente" #direccionPaciente="ngModel" autocomplete="off"
+                            required />
+                            <p-message *ngIf="f.submitted && !model.direccionPaciente" severity="error" text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="barrioPaciente">Barrio:</label>
+                        <input type="text" class="form-control" name="barrioPaciente" [(ngModel)]="model.barrioPaciente"
+                            #barrioPaciente="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.barrioPaciente" severity="error" text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="barrioPaciente">Fecha de Nacimiento:</label>
+                        <input type="date" class="form-control" name="fechaNacimientoPaciente"
+                            [(ngModel)]="model.fechaNacimientoPaciente" #fechaNacimientoPaciente="ngModel"
+                            autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.fechaNacimientoPaciente" severity="error" text="Campo Obligatorio."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button pButton 
+                            class="ui-button-rounded ui-button-success" 
+                            label="Aceptar" 
+                            icon="fas fa-check" 
+                            type="submit"
+                    >
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL EDITAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalEditarPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" *ngIf="selectedPaciente">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Paciente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form name="form" (ngSubmit)="f.form.valid 
+            && selectedPaciente.nombre && selectedPaciente.apellido
+            && selectedPaciente.telefono && selectedPaciente.direccion
+            && selectedPaciente.barrio && selectedPaciente.fechaNacimiento
+            && editarPaciente(f);" #f="ngForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="idPaciente">DNI:</label>
+                        <input type="text" class="form-control" name="idPaciente" [(ngModel)]="selectedPaciente.dni"
+                            #idPaciente="ngModel" disabled />
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="nombrePaciente">Nombre:</label>
+                        <input type="text" class="form-control" name="nombrePaciente" [(ngModel)]="selectedPaciente.nombre"
+                            #nombrePaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedPaciente.nombre" severity="error" text="Campo no puede quedar vacío."></p-message>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="apellidoPaciente">Apellido:</label>
+                        <input type="text" class="form-control" name="apellidoPaciente" [(ngModel)]="selectedPaciente.apellido"
+                            #apellidoPaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedPaciente.apellido" severity="error" text="Campo no puede quedar vacío."></p-message>
+                    </div>
+            
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !telefonoPaciente.valid }">
+                        <label for="telefonoPaciente">Telefono:</label>
+                        <input type="text" class="form-control" name="telefonoPaciente" [(ngModel)]="selectedPaciente.telefono"
+                            #telefonoPaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedPaciente.telefono" severity="error" text="Campo no puede quedar vacío."></p-message>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="direccionPaciente">Direccion:</label>
+                        <input type="text" class="form-control" name="direccionPaciente" [(ngModel)]="selectedPaciente.direccion"
+                            #direccionPaciente="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedPaciente.direccion" severity="error" text="Campo no puede quedar vacío."></p-message>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="barrioPaciente">Barrio:</label>
+                        <input type="text" class="form-control" name="barrioPaciente" [(ngModel)]="selectedPaciente.barrio"
+                            #barrioPaciente="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !selectedPaciente.barrio" severity="error" text="Campo no puede quedar vacío."></p-message>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="fechaNacimientoPaciente">Fecha de Nacimiento:</label>
+                        <input type="text" class="form-control" name="fechaNacimientoPaciente" value="{{selectedPaciente.fechaNacimiento | date: 'dd/MM/yyyy'}}" disabled />
+                        <p-message *ngIf="f.submitted && !selectedPaciente.fechaNacimiento" severity="error" text="Campo no puede quedar vacío."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit" (click)="cerrarModalEditar()">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

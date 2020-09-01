@@ -1,0 +1,174 @@
+<div class="br-mainpanel"  *ngIf="pedido">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">Pedido: {{pedido.numero}}
+                <button pButton
+                label="Atras"
+                icon="fas fa-arrow-circle-left"
+                class="ui-button-rounded ui-button-secondary float-right"
+                [routerLink]="['/pedidos']"
+            >
+            </button>
+        </h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row">
+            <div class="col-lg-3">
+            <p-tabView>
+                <p-tabPanel header="Detalle">                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Numero</strong></td>
+                                    <td>
+                                        <input type="text" [(ngModel)]='pedido.numero' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre' class='form-control' disabled>
+                                    </td>
+                                </tr>            
+                                <tr>
+                                    <td><strong>Fecha</strong></td>
+                                    <td>
+                                        <input value="{{pedido.estadosPedido[pedido.estadosPedido.length - 1].fecha | date: 'dd/MM/yyyy' : '+1'}}" class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Paciente</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.paciente.apellido' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Direccion</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.paciente.direccion' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medicamento</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.medicamento.nombre' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dosis</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.medicamento.dosis' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Comprimidos</strong></td>
+                                    <td>
+                                        <input [(ngModel)]='pedido.medicamento.cantidadComprimidos' class='form-control' disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Repartidor</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar && !pedido.repartidor" value='No Asignado' class='form-control' disabled>
+                                        <input *ngIf="!editar && pedido.repartidor" [(ngModel)]='pedido.repartidor.apellido' class='form-control' disabled>
+                                        <select *ngIf="editar" class="form-control" [(ngModel)] = "selectedRepartidor" name="repartidor">
+                                            <option *ngFor="let repartidor of repartidores" [ngValue]="repartidor">{{repartidor.nombre}} {{repartidor.apellido}}</option>                       
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Farmacia</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar && !pedido.farmacia" value='No Asignada' class='form-control' disabled>
+                                        <input *ngIf="!editar && pedido.farmacia" [(ngModel)]='pedido.farmacia.nombre' class='form-control' disabled>
+                                        <select *ngIf="editar" class="form-control" [(ngModel)] = "selectedFarmacia" name="farmacias">
+                                            <option *ngFor="let farmacia of farmacias" [ngValue]="farmacia">{{farmacia.nombre}} {{farmacia.direccion}}</option>                       
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    <!-- BOTON ELIMINAR -->
+                                        <button *ngIf="!editar"
+                                            pButton
+                                            label="Eliminar"
+                                            icon="fas fa-times"
+                                            class="ui-button-danger ui-button-raised ui-button-rounded float-right"
+                                            (click)="eliminarPedido()"
+                                        >   
+                                        </button>
+
+                                    <!-- BOTON EDITAR -->
+                                        <button *ngIf="!editar"
+                                            pButton
+                                            label="Editar"
+                                            icon="fas fa-pencil-alt"
+                                            class="ui-button-warning ui-button-raised ui-button-rounded float-right"
+                                            (click)="toggleEditar()"
+                                        >   
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar"
+                                            pButton
+                                            label="Guardar"
+                                            icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right"
+                                            (click)="actualizarPedido()"
+                                        >   
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </p-tabPanel>               
+            </p-tabView>
+        </div>
+        <div class="col-lg-3">
+            <div *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre == "Generado" || pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre == "Pendiente"' class="btn btn-danger btn-with-icon" style="color:white" disabled>
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-arrow-left"></i></span>
+                    <span class="pd-x-15">Estado Anterior</span>
+                </div>
+            </div>
+            <a *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Generado" && pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Pendiente" ' class="btn btn-danger btn-with-icon" style="color:white" (click)="estadoAnterior()">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-arrow-left"></i></span>
+                    <span class="pd-x-15">Estado Anterior</span>
+                </div>
+            </a>
+            <div *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre == "Entregado" || pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre == "Pendiente"' class="btn btn-teal btn-with-icon" style="color:white" disabled>
+                    <div class="ht-40">
+                        <span class="pd-x-15">Estado Siguiente</span>
+                        <span class="icon wd-40"><i class="fas fa-arrow-right"></i></span>
+                    </div>
+            </div>
+                <a *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Entregado" && pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Pendiente"' class="btn btn-teal btn-with-icon" style="color:white" (click)="estadoSiguiente()">
+                    <div class="ht-40">
+                        <span class="pd-x-15">Estado Siguiente</span>
+                        <span class="icon wd-40"><i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+
+
+                <a *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Pendiente" && pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre != "Entregado"' class="btn btn-dark btn-with-icon" style="color:white" (click)="estadoPendiente()">
+                    <div class="ht-40">
+                        <span class="pd-x-15">Colocar en Pendiente</span>
+                    </div>
+                </a>
+                <a *ngIf='pedido.estadosPedido[pedido.estadosPedido.length - 1].estado.nombre == "Pendiente"' class="btn btn-dark btn-with-icon" style="color:white" (click)="estadoNoPendiente()">
+                    <div class="ht-40">
+                        <span class="pd-x-15">Retirar de pendiente</span>
+                      
+                    </div>
+                </a>
+
+
+            </div>
+        </div>
+    </div>
+</div>

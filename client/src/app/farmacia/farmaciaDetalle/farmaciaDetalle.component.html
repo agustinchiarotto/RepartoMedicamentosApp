@@ -1,0 +1,107 @@
+<div class="br-mainpanel" *ngIf="farmacia && medicamentosFarmacia">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">Farmacia: {{farmacia.nombre}} - {{farmacia.cuit}}
+                <button pButton
+                label="Atras"
+                icon="fas fa-arrow-circle-left"
+                class="ui-button-rounded ui-button-secondary float-right"
+                [routerLink]="['/farmacias']"
+            >
+            </button>
+        </h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row">
+            <p-tabView>
+                <p-tabPanel header="Detalle">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>CUIT</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" type="text" [(ngModel)]='farmacia.cuit'
+                                            class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='farmacia.cuit' class='form-control'>
+                                        <p-message *ngIf="editar && !farmacia.cuit" severity="error" text="Campo Obligatorio."></p-message>
+                                        <p-message *ngIf="editar && farmacia.cuit && validarCuit()" severity="error" text="Cuit Inválido."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombre</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='farmacia.nombre' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='farmacia.nombre' class='form-control'>
+                                        <p-message *ngIf="editar && !farmacia.nombre" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Direccion</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='farmacia.direccion' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='farmacia.direccion' class='form-control'>
+                                        <p-message *ngIf="editar && !farmacia.direccion" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefono</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='farmacia.telefono' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='farmacia.telefono' class='form-control'>
+                                        <p-message *ngIf="editar && !farmacia.telefono" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='farmacia.email' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='farmacia.email' class='form-control'>
+                                        <p-message *ngIf="editar && !farmacia.email" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <!-- BOTON ELIMINAR -->
+                                        <button *ngIf="!editar" pButton label="Eliminar" icon="fas fa-times"
+                                            class="ui-button-danger ui-button-raised ui-button-rounded float-right"
+                                            (click)="eliminarFarmacia()">
+                                        </button>
+
+                                        <!-- BOTON EDITAR -->
+                                        <button *ngIf="!editar" pButton label="Editar" icon="fas fa-pencil-alt"
+                                            class="ui-button-warning ui-button-raised ui-button-rounded float-right"
+                                            (click)="toggleEditar()">
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar && farmacia.cuit && farmacia.nombre && farmacia.telefono && farmacia.direccion && farmacia.email && !validarCuit()" pButton label="Guardar" icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right"
+                                            (click)="actualizarFarmacia()">
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar && !farmacia.cuit || !farmacia.nombre || !farmacia.telefono || !farmacia.direccion ||!farmacia.email  || validarCuit()" pButton label="Guardar" icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right" disabled>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Medicamentos">
+                    <app-asignar-medicamento
+                        [idFarmacia]='farmacia._id'
+                        [medicamentosFarmacia]='farmacia.medicamentos'
+                    >
+                    </app-asignar-medicamento>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>

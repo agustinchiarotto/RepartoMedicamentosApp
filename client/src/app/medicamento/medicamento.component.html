@@ -1,0 +1,252 @@
+<div [@routerTransition]>
+    <div class="br-mainpanel">
+        <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+            <h4 class="tx-gray-800 mg-b-5">Medicamentos</h4>
+        </div>
+
+        <div class="br-pagebody pd-x-20 pd-sm-x-30">
+            <div class="row row-sm">
+                <div class="col-lg-12">
+                    <div class="card card-default mb-3">
+                        <div class="card-header">
+                            <h6 style="text-decoration: none;color: #333;">
+                            <strong style="text-decoration: none;color: #333;">Administración de Medicamentos
+                                <button pButton class="ui-button-rounded float-right" label="Nuevo Medicamento"
+                                    icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarMedicamento">
+                                </button>
+                            </strong>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p-table #dt [columns]="cols" [value]="medicamentos" selectionMode="single" 
+                                [(selection)]="selectedMedicamento"  [paginator]="true"  [rows]="12">
+                                <ng-template pTemplate="caption">
+                                    <div style="text-align: right">
+                                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                        <input type="text" pInputText size="50" placeholder="Filtro"
+                                            (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                            style="width:auto">
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns">
+                                            {{col.header}}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                            <input *ngSwitchCase="'idMedicamento'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'dosis'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'cadenaFrio'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'laboratorio'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+                                            <input *ngSwitchCase="'cantidadComprimidos'" pInputText type="text"
+                                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                style="width:100%">
+
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-medicamento let-columns="columns">
+                                    <tr [pSelectableRow]="medicamento">
+                                        <td *ngFor="let col of columns">
+                                            {{medicamento[col.field]}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="pull-right">
+                                <!--Boton Editar (Deshabilitado)-->
+                                <button pButton *ngIf="!selectedMedicamento" class="ui-button-rounded ui-button-warning"
+                                    label="Editar" icon="fas fa-pencil-alt" disabled>
+                                </button>
+
+                                <!--Boton Editar (Habilitado)-->
+                                <button pButton *ngIf="selectedMedicamento" class="ui-button-rounded ui-button-warning"
+                                    label="Editar" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modalEditarMedicamento">
+                                </button>
+
+                                &nbsp;
+
+                                <!--Boton Eliminar (Deshabilitado)-->
+                                <button pButton *ngIf="!selectedMedicamento" class="ui-button-rounded ui-button-danger"
+                                    label="Eliminar" icon="fas fa-times" disabled>
+                                </button>
+
+                                <!--Boton Eliminar (Habilitado)-->
+                                <button pButton *ngIf="selectedMedicamento" class="ui-button-rounded ui-button-danger"
+                                    label="Eliminar" icon="fas fa-times" data-toggle="modal" data-target="#"
+                                    (click)="eliminarMedicamento()">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL AGREGAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalAgregarMedicamento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Medicamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="f.form.valid 
+                && model.nombreMedicamento
+                && model.dosisMedicamento && cadenaFrioMedicamento.options[cadenaFrioMedicamento.selectedIndex].value
+                && model.laboratorioMedicamento && model.cantidadComprimidosMedicamento
+                
+                && cargarMedicamento(cadenaFrioMedicamento.options[cadenaFrioMedicamento.selectedIndex].value, f);" #f="ngForm" novalidate autocomplete="off">
+                <div class="modal-body">
+
+                    <div class="form-group required">
+                        <label class="control-label" for="nombreMedicamento">Nombre:</label>
+                        <input type="text" class="form-control" name="nombreMedicamento" [(ngModel)]="model.nombreMedicamento"
+                            #nombreMedicamento="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.nombreMedicamento" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="dosisMedicamento">Dosis:</label>
+                        <input type="text" class="form-control" name="dosisMedicamento" [(ngModel)]="model.dosisMedicamento"
+                            #dosisMedicamento="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !model.dosisMedicamento" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="cadenaFrioMedicamento">Cadena Frio:</label>
+                        <select class="form-control select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true" name="cadenaFrioMedicamento" #cadenaFrioMedicamento>
+                                <option selected value="No">No</option>
+                                <option value="Si">Si</option>
+                        </select>
+                        <p-message *ngIf="f.submitted && !cadenaFrioMedicamento.options[cadenaFrioMedicamento.selectedIndex].value" severity="error" text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="laboratorioMedicamento">Laboratorio:</label>
+                        <input type="text" class="form-control" name="laboratorioMedicamento"
+                            [(ngModel)]="model.laboratorioMedicamento" #laboratorioMedicamento="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !model.laboratorioMedicamento" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="cantidadComprimidosMedicamento">Cantidad Comprimidos:</label>
+                        <input type="number" class="form-control" name="cantidadComprimidosMedicamento"
+                            [(ngModel)]="model.cantidadComprimidosMedicamento" #cantidadComprimidosMedicamento="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !model.cantidadComprimidosMedicamento" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL EDITAR -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalEditarMedicamento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" *ngIf="selectedMedicamento"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Medicamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarEditar>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="f.form.valid 
+                && selectedMedicamento.nombre
+                && selectedMedicamento.dosis && cadenaFrioMed.options[cadenaFrioMed.selectedIndex].value
+                && selectedMedicamento.laboratorio && selectedMedicamento.cantidadComprimidos
+                
+                && editarMedicamento(cadenaFrioMed.options[cadenaFrioMed.selectedIndex].value, f);" #f="ngForm" novalidate autocomplete="off">
+                <div class="modal-body">
+
+                    <div class="form-group required">
+                        <label class="control-label" for="nombreMedicamento">Nombre:</label>
+                        <input type="text" class="form-control" name="nombreMedicamento" [(ngModel)]="selectedMedicamento.nombre"
+                            #nombreMedicamento="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedMedicamento.nombre" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="dosisMedicamento">Dosis:</label>
+                        <input type="text" class="form-control" name="dosisMedicamento" [(ngModel)]="selectedMedicamento.dosis"
+                            #dosisMedicamento="ngModel" autocomplete="off" required />
+                        <p-message *ngIf="f.submitted && !selectedMedicamento.dosis" severity="error"
+                            text="Campo Obligatorio."></p-message>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="cadenaFrioMedicamento">Cadena Frio:</label>
+                        <select class="form-control select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true" name="cadenaFrioMed" #cadenaFrioMed>
+                                <option selected value="No">No</option>
+                                <option value="Si">Si</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="laboratorioMedicamento">Laboratorio:</label>
+                        <input type="text" class="form-control" name="laboratorioMedicamento"
+                            [(ngModel)]="selectedMedicamento.laboratorio" #laboratorioMedicamento="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !selectedMedicamento.laboratorio" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label" for="cantidadComprimidosMedicamento">Cantidad Comprimidos:</label>
+                        <input type="number" class="form-control" name="cantidadComprimidosMedicamento"
+                            [(ngModel)]="selectedMedicamento.cantidadComprimidos" #cantidadComprimidosMedicamento="ngModel" autocomplete="off"
+                            required />
+                        <p-message *ngIf="f.submitted && !selectedMedicamento.cantidadComprimidos" severity="error"
+                            text="Campo Obligatorio."></p-message>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

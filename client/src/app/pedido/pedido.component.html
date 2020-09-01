@@ -1,0 +1,215 @@
+<div [@routerTransition]>
+        <div class="br-mainpanel">
+            <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+                <h4 class="tx-gray-800 mg-b-5">Pedidos</h4>
+            </div>
+    
+            <div class="br-pagebody pd-x-20 pd-sm-x-30">
+                <div class="row row-sm">
+                    <div class="col-lg-12">
+                        <div class="card card-default mb-3">
+                            <div class="card-header">
+                                <h6 style="text-decoration: none;color: #333;">
+                                    <strong style="text-decoration: none;color: #333;">Administración de Pedidos
+                                        <button pButton class="ui-button-rounded float-right" label="Nuevo Pedido"
+                                            icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarPedido">
+                                        </button>
+                                    </strong>
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <h6><strong style="color:black">Elegir Estado:</strong></h6>
+                                    <a class="btn btn-warning btn-with-icon" style="color:white" (click)="getPedidos('Generado')">
+                                        <div class="ht-40">
+                                            <span class="icon wd-40"><i class="fas fa-clock"></i></span>
+                                            <span class="pd-x-15">Generados</span>
+                                        </div>
+                                    </a>
+                                    &nbsp;
+                                    <a class="btn btn-dark btn-with-icon" style="color:white" (click)="getPedidos('En Proceso')">
+                                        <div class="ht-40">
+                                            <span class="icon wd-40"><i class="fas fa-file-signature"></i></span>
+                                            <span class="pd-x-15">En Proceso</span>
+                                        </div>
+                                    </a>
+                                    &nbsp;
+                                    <a class="btn btn-primary btn-with-icon" style="color:white" (click)="getPedidos('Retirado')">
+                                        <div class="ht-40">
+                                            <span class="icon wd-40"><i class="fas fa-truck-loading"></i></span>
+                                            <span class="pd-x-15">Retirados</span>
+                                        </div>
+                                    </a>
+                                    &nbsp;
+                                    <a class="btn btn-danger btn-with-icon" style="color:white" (click)="getPedidos('Pendiente')">
+                                        <div class="ht-40">
+                                            <span class="icon wd-40"><i class="fas fa-exclamation-circle"></i></span>
+                                            <span class="pd-x-15">Pendientes</span>
+                                        </div>
+                                    </a>
+                                    &nbsp;                                    
+                                    <a class="btn btn-teal btn-with-icon" style="color:white" (click)="getPedidos('Entregado')">
+                                        <div class="ht-40">
+                                            <span class="icon wd-40"><i class="fas fa-grin-stars"></i></span>
+                                            <span class="pd-x-15">Entregados</span>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <p-table [responsive]="true" #dt [columns]="cols" [value]="pedidos" selectionMode="single" [paginator]="true"
+                                    [rows]="12" [(selection)]="selectedPedido">
+                                    <ng-template pTemplate="caption">
+                                        <div style="text-align: right">
+                                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                            <input type="text" pInputText size="50" placeholder="Filtro"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                style="width:auto">
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th *ngFor="let col of columns">
+                                                {{col.header}}
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+    
+                                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                        <tr [pSelectableRow]="rowData">
+                                            <td *ngFor="let col of columns">
+                                                <div *ngIf='col.field=="numero"'>
+                                                    {{rowData[col.field]}}
+                                                </div>
+                                                <div *ngIf='rowData[col.field] && col.field=="estadosPedido"'>
+                                                    {{rowData[col.field][rowData[col.field].length - 1].estado.nombre}}
+                                                </div>
+                                                <div *ngIf='rowData[col.field] && col.field=="fecha"'>
+                                                    {{rowData[col.field] | date: 'dd/MM/yyyy - h:mm a'}}
+                                                </div>
+                                                <div *ngIf='rowData[col.field] && col.field=="paciente"'>
+                                                    <div *ngIf='col.subfield=="apellido"'>
+                                                        {{rowData[col.field].apellido}}
+                                                    </div>
+                                                    <div *ngIf='col.subfield=="direccion"'>
+                                                        {{rowData[col.field].direccion}}
+                                                    </div>
+                                                </div>
+                                                <div *ngIf='rowData[col.field] && col.field=="repartidor"'>
+                                                    {{rowData[col.field].apellido}}
+                                                </div>
+                                                <div *ngIf='rowData[col.field] && col.field=="medicamento"'>
+                                                    <div *ngIf='col.subfield=="nombre"'>
+                                                        {{rowData[col.field].nombre}}
+                                                    </div>
+                                                    <div *ngIf='col.subfield=="cadenaFrio"'>
+                                                        {{rowData[col.field].cadenaFrio}}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="card-footer">
+                                <div class="pull-right">
+                                    <!-- (deshabilitado) -->
+                                    <button *ngIf="!selectedPedido" disabled pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded">
+                                    </button>
+                                    <!-- (habilitado) -->
+                                    <button *ngIf="selectedPedido" pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded"
+                                        [routerLink]="['/pedido', selectedPedido._id]">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAgregarPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nuevo Pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="f.form.valid 
+                    && model.fechaPedido
+                    && model.paciente 
+                    && model.medicamento
+                    && model.farmacia
+                    && model.farmacia                     
+                    && cargarPedido(f);" #f="ngForm" novalidate>
+                    <div class="modal-body">
+                        <div class="form-group required">
+                            <label class="control-label" for="fechaPedido">Fecha Pedido:</label>
+                            <input type="datetime-local" class="form-control" name="fechaPedido" [(ngModel)]="model.fechaPedido"
+                                #fechaPedido="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.fechaPedido" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="paciente">Paciente:</label>
+                            <select class="form-control" [(ngModel)] = "model.paciente" name="paciente" (change)="getMedicamentosPaciente()">
+                                <option *ngFor="let paciente of pacientes" [ngValue]="paciente">{{paciente.dni}} - {{paciente.nombre}} {{paciente.apellido}}</option>                       
+                            </select>
+                            <p-message *ngIf="f.submitted && !model.paciente" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="medicamento">Medicamento:</label>
+                            <select *ngIf="!model.paciente" class="form-control">
+                                <option>--- debe seleccionar un paciente ---</option>                       
+                            </select>
+                            <select *ngIf="model.paciente" class="form-control" [(ngModel)] = "model.medicamento" name="medicamento" (change)="getFarmaciasMedicamento()">
+                                <option *ngFor="let medicamento of medicamentos" [ngValue]="medicamento">{{medicamento.nombre}}</option>                       
+                            </select>
+                            <p-message *ngIf="f.submitted && !model.medicamento" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                                <label class="control-label" for="farmacias">Farmacia:</label>
+                                <select *ngIf="!model.medicamento" class="form-control">
+                                    <option>--- debe seleccionar un medicamento ---</option>                       
+                                </select>
+                                <select *ngIf="model.medicamento" class="form-control" [(ngModel)] = "model.farmacia" name="farmacias">
+                                    <option *ngFor="let farmacia of farmaciasMedicamento" [ngValue]="farmacia">{{farmacia.nombre}}</option>                       
+                                </select>
+                                <p-message *ngIf="f.submitted && !model.farmacia" severity="error"
+                                    text="Campo Obligatorio."></p-message>
+        
+                            </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="repartidor">Repartidor:</label>
+                            <select class="form-control" [(ngModel)] = "model.repartidor" name="repartidor">
+                                <option *ngFor="let repartidor of repartidores" [ngValue]="repartidor">{{repartidor.nombre}}</option>                       
+                            </select>
+                            <p-message *ngIf="f.submitted && !model.repartidor" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                            type="submit">
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

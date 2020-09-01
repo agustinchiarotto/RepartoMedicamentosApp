@@ -1,0 +1,175 @@
+<div class="br-mainpanel" *ngIf="medico && clinicasMedico && pacientesMedico">
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+        <h4 class="tx-gray-800 mg-b-5">Medico: {{medico.nombre}} {{medico.apellido}} - {{medico.dni}}
+                <button pButton
+                label="Atras"
+                icon="fas fa-arrow-circle-left"
+                class="ui-button-rounded ui-button-secondary float-right"
+                [routerLink]="['/medicos']"
+            >
+            </button>
+        </h4>
+    </div>
+
+    <div class="br-pagebody pd-x-20 pd-sm-x-30">
+        <div class="row">
+            <p-tabView>
+                <p-tabPanel header="Detalle">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>DNI</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" type="text" [(ngModel)]='medico.dni' class='form-control' disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.dni' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.dni" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombre</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='medico.nombre' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.nombre' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.nombre" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Apellido</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='medico.apellido' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.apellido' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.apellido" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefono</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='medico.telefono' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.telefono' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.telefono" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Matricula</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='medico.matricula' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.matricula' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.matricula" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Especialidad</strong></td>
+                                    <td>
+                                        <input *ngIf="!editar" [(ngModel)]='medico.especialidad' class='form-control'
+                                            disabled>
+                                        <input *ngIf="editar" type="text" [(ngModel)]='medico.especialidad' class='form-control'>
+                                        <p-message *ngIf="editar && !medico.especialidad" severity="error" text="Campo Obligatorio."></p-message>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <!-- BOTON ELIMINAR -->
+                                        <button *ngIf="!editar" pButton label="Eliminar" icon="fas fa-times"
+                                            class="ui-button-danger ui-button-raised ui-button-rounded float-right"
+                                            (click)="eliminarMedico()">
+                                        </button>
+
+                                        <!-- BOTON EDITAR -->
+                                        <button *ngIf="!editar" pButton label="Editar" icon="fas fa-pencil-alt"
+                                            class="ui-button-warning ui-button-raised ui-button-rounded float-right"
+                                            (click)="toggleEditar()">
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar && medico.dni && medico.nombre && medico.telefono && medico.apellido && medico.matricula && medico.especialidad" pButton label="Guardar" icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right"
+                                            (click)="actualizarMedico()">
+                                        </button>
+                                        <!-- BOTON GUARDAR -->
+                                        <button *ngIf="editar && (!medico.dni || !medico.nombre || !medico.telefono || !medico.apellido || !medico.matricula || !medico.especialidad)" pButton label="Guardar" icon="fas fa-check"
+                                            class="ui-button-success ui-button-raised ui-button-rounded float-right" disabled>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Clinicas">
+                    <app-asignar-clinica
+                        [idMedico]='medico._id'
+                        [clinicasMedico]='medico.clinicas'
+                    >
+                    </app-asignar-clinica>
+                </p-tabPanel>
+                <p-tabPanel header="Pacientes">
+                        <p-table #dt [columns]="colsPaciente" [value]="pacientesMedico" selectionMode="single"
+                        [paginator]="true" [rows]="12"
+                        emptyMessage="No hay registros"
+                        [(selection)]="selectedMedico">
+                        <ng-template pTemplate="caption">
+                            <div style="text-align: right">
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Filtro"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    style="width:auto">
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                        <input *ngSwitchCase="'dni'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'apellido'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'direccion'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'barrio'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+                                    <input *ngSwitchCase="'fechaNacimiento'" pInputText type="text"
+                                        (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                        style="width:100%">
+            
+                                </th>
+                            </tr>
+                        </ng-template>
+            
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pSelectableRow]="rowData">
+                                <td *ngFor="let col of columns">
+                                    <div *ngIf='rowData[col.field] && col.field=="fechaNacimiento"'>
+                                        {{rowData[col.field] | date: 'dd/MM/yyyy'}}
+                                    </div>
+                                    <div *ngIf='rowData[col.field] && col.field!="fechaNacimiento"'>
+                                        {{rowData[col.field]}}
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>

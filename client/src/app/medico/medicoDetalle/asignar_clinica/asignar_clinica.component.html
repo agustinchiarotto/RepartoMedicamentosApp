@@ -1,0 +1,115 @@
+<div class="card card-default mb-3">
+        <div class="card-header">
+            <div>
+                <h6 style="text-decoration: none;color: #333;"> <strong class="float-left">Administrar Clinicas de Medico</strong>
+                    <button pButton class="ui-button-rounded float-right" label="Asignar Clinicas" icon="fas fa-plus"
+                    data-toggle="modal" data-target="#modalAsignarClinicas">
+                    </button>
+                </h6>
+            </div>
+        </div>
+        <div class="card-body">
+            <p-table #dt [columns]="colsClinica" [value]="clinicasMedico" selectionMode="single" [paginator]="true"
+                [rows]="12" emptyMessage="No hay registros" [(selection)]="selectedClinica">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Filtro"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                            <input *ngSwitchCase="'cuit'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+                            <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+                            <input *ngSwitchCase="'direccion'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+                            <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+                            <input *ngSwitchCase="'email'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" style="width:100%">
+    
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-clinica let-columns="columns">
+                    <tr [pSelectableRow]="clinica">
+                        <td *ngFor="let col of columns">
+                            {{clinica[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="card-footer">
+            <!-- BOTON ELIMINAR -->
+            <button *ngIf="selectedClinica" pButton label="Quitar Clinica" icon="fas fa-times"
+                class="ui-button-danger ui-button-raised ui-button-rounded float-right" (click)="quitarClinica()">
+            </button>
+            <button *ngIf="!selectedClinica" pButton label="Quitar Clinica" icon="fas fa-times"
+                class="ui-button-danger ui-button-raised ui-button-rounded float-right" disabled>
+            </button>
+        </div>
+    </div>
+    
+    <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAsignarClinicas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Asignar Clinicas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAsignar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p-table #dt [columns]="colsClinicasNoAsignadas" [value]="clinicasNoAsignadas" [paginator]="true"
+                        [rows]="12" [(selection)]="selectedClinicas"(onRowSelect)="agregarIdClinica($event)" (onRowUnselect)="quitarIdClinica($event)">
+                        <ng-template pTemplate="caption">
+                            <div style="text-align: right">
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Filtro"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3em">
+                                    
+                                </th>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-clinica let-columns="columns">
+                            <tr [pSelectableRow]="clinica">
+                                <td>
+                                    <p-tableCheckbox [value]="clinica"></p-tableCheckbox>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{clinica[col.field]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit" (click)="asignarClinicas()">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>

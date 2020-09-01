@@ -1,0 +1,123 @@
+<div class="card card-default mb-3">
+        <div class="card-header">
+            <div>
+                <h6 style="text-decoration: none;color: #333;"> <strong class="float-left">Administrar Medicamentos de Farmacia</strong>
+                    <button pButton class="ui-button-rounded float-right" label="Asignar Medicamentos" icon="fas fa-plus"
+                    data-toggle="modal" data-target="#modalAsignarMedicamentos">
+                    </button>
+                </h6>
+            </div>
+        </div>
+        <div class="card-body">
+            <p-table #dt [columns]="colsMedicamento" [value]="medicamentosFarmacia" selectionMode="single" [paginator]="true"
+                [rows]="12" emptyMessage="No hay registros" [(selection)]="selectedMedicamento">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Filtro"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                <input *ngSwitchCase="'idMedicamento'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+                            <input *ngSwitchCase="'dosis'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+                            <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+                            <input *ngSwitchCase="'cadenaFrio'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+                            <input *ngSwitchCase="'laboratorio'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+                            <input *ngSwitchCase="'cantidadComprimidos'" pInputText type="text"
+                                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                style="width:100%">
+    
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-medicamento let-columns="columns">
+                    <tr [pSelectableRow]="medicamento">
+                        <td *ngFor="let col of columns">
+                            {{medicamento[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="card-footer">
+            <!-- BOTON ELIMINAR -->
+            <button *ngIf="selectedMedicamento" pButton label="Quitar Medicamento" icon="fas fa-times"
+                class="ui-button-danger ui-button-raised ui-button-rounded float-right" (click)="quitarMedicamento()">
+            </button>
+            <button *ngIf="!selectedMedicamento" pButton label="Quitar Medicamento" icon="fas fa-times"
+                class="ui-button-danger ui-button-raised ui-button-rounded float-right" disabled>
+            </button>
+        </div>
+    </div>
+    
+    <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAsignarMedicamentos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Asignar Medicamentos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAsignar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p-table #dt [columns]="colsMedicamentosNoAsignados" [value]="medicamentosNoAsignados" [paginator]="true"
+                        [rows]="12" [(selection)]="selectedMedicamentos"(onRowSelect)="agregarIdMedicamento($event)" (onRowUnselect)="quitarIdMedicamento($event)">
+                        <ng-template pTemplate="caption">
+                            <div style="text-align: right">
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Filtro"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3em">
+                                    
+                                </th>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-medicamento let-columns="columns">
+                            <tr [pSelectableRow]="medicamento">
+                                <td>
+                                    <p-tableCheckbox [value]="medicamento"></p-tableCheckbox>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{medicamento[col.field]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="modal-footer">
+                    <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                        type="submit" (click)="asignarMedicamentos()">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,162 @@
+<div [@routerTransition]>
+        <div class="br-mainpanel">
+            <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+                <h4 class="tx-gray-800 mg-b-5">Clinicas</h4>
+            </div>
+    
+            <div class="br-pagebody pd-x-20 pd-sm-x-30">
+                <div class="row row-sm">
+                    <div class="col-lg-12">
+                        <div class="card card-default mb-3">
+                            <div class="card-header">
+                                <div>
+                                    <a>
+                                        <strong style="text-decoration: none;color: #333;">Administración de Clinicas</strong>
+                                        <div class='pull-left'>
+                                        </div>
+                                    </a>
+                                    <button pButton class="ui-button-rounded float-right" label="Nueva Clinica"
+                                        icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarClinica">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p-table [responsive]="true" #dt [columns]="cols" [value]="clinicas" selectionMode="single"
+                                    [(selection)]="selectedClinica"  [paginator]="true" [rows]="12">
+                                    <ng-template pTemplate="caption">
+                                        <div style="text-align: right">
+                                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                            <input type="text" pInputText size="50" placeholder="Filtro"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                style="width:auto">
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th *ngFor="let col of columns">
+                                                {{col.header}}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                                <input *ngSwitchCase="'cuit'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'direccion'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'email'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+    
+                                    <ng-template pTemplate="body" let-clinicas let-columns="columns">
+                                        <tr [pSelectableRow]="clinicas">
+                                            <td *ngFor="let col of columns">
+                                                {{clinicas[col.field]}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="card-footer">
+                                <div class="pull-right">
+                                    <!-- (deshabilitado) -->
+                                    <button *ngIf="!selectedClinica" disabled pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded">
+                                    </button>
+                                    <!-- (habilitado) -->
+                                    <button *ngIf="selectedClinica" pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded"
+                                        [routerLink]="['/clinica', selectedClinica._id]">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAgregarClinica" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nueva Clinica</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="f.form.valid 
+                    && model.cuitClinica && model.nombreClinica
+                    && model.direccionClinica && model.telefonoClinica
+                    && model.emailClinica
+                    
+                    && cargarClinica(f);" #f="ngForm" novalidate>
+                    <div class="modal-body">
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="cuitClinica">CUIT:</label>
+                            <input type="text" class="form-control" name="cuitClinica" [(ngModel)]="model.cuitClinica"
+                                #cuitClinica="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="model.cuitClinica && validarCuit()" severity="error" text="Cuit Inválido."></p-message>
+                            <p-message *ngIf="f.submitted && !model.cuitClinica" severity="error" text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="nombreClinica">Nombre:</label>
+                            <input type="text" class="form-control" name="nombreClinica" [(ngModel)]="model.nombreClinica"
+                                #nombreClinica="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.nombreClinica" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="direccionClinica">Direccion:</label>
+                            <input type="text" class="form-control" name="direccionClinica" [(ngModel)]="model.direccionClinica"
+                                #direccionClinica="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.direccionClinica" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="telefonoClinica">Telefono:</label>
+                            <input type="text" class="form-control" name="telefonoClinica" [(ngModel)]="model.telefonoClinica"
+                                #telefonoClinica="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.telefonoClinica" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="emailClinica">Email:</label>
+                            <input type="text" class="form-control" name="emailClinica"
+                                [(ngModel)]="model.emailClinica" #emailClinica="ngModel" autocomplete="off"
+                                required />
+                            <p-message *ngIf="f.submitted && !model.emailClinica" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                            type="submit">
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

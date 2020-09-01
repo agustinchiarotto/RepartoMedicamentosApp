@@ -1,0 +1,162 @@
+<div [@routerTransition]>
+        <div class="br-mainpanel">
+            <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+                <h4 class="tx-gray-800 mg-b-5">Farmacias</h4>
+            </div>
+    
+            <div class="br-pagebody pd-x-20 pd-sm-x-30">
+                <div class="row row-sm">
+                    <div class="col-lg-12">
+                        <div class="card card-default mb-3">
+                            <div class="card-header">
+                                <div>
+                                    <a>
+                                        <strong style="text-decoration: none;color: #333;">Administración de Farmacias</strong>
+                                        <div class='pull-left'>
+                                        </div>
+                                    </a>
+                                    <button pButton class="ui-button-rounded float-right" label="Nueva Farmacia"
+                                        icon="fas fa-plus" data-toggle="modal" data-target="#modalAgregarFarmacia">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p-table [responsive]="true" #dt [columns]="cols" [value]="farmacias" selectionMode="single"
+                                    [(selection)]="selectedFarmacia"  [paginator]="true" [rows]="12">
+                                    <ng-template pTemplate="caption">
+                                        <div style="text-align: right">
+                                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                            <input type="text" pInputText size="50" placeholder="Filtro"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                style="width:auto">
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th *ngFor="let col of columns">
+                                                {{col.header}}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                                                <input *ngSwitchCase="'cuit'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'direccion'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'nombre'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'telefono'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                                <input *ngSwitchCase="'email'" pInputText type="text"
+                                                    (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"
+                                                    style="width:100%">
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+    
+                                    <ng-template pTemplate="body" let-farmacias let-columns="columns">
+                                        <tr [pSelectableRow]="farmacias">
+                                            <td *ngFor="let col of columns">
+                                                {{farmacias[col.field]}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="card-footer">
+                                <div class="pull-right">
+                                    <!-- (deshabilitado) -->
+                                    <button *ngIf="!selectedFarmacia" disabled pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded">
+                                    </button>
+                                    <!-- (habilitado) -->
+                                    <button *ngIf="selectedFarmacia" pButton label="Detalle" icon="fas fa-search"
+                                        class="ui-button-success ui-button-raised ui-button-rounded"
+                                        [routerLink]="['/farmacia', selectedFarmacia._id]">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ============================================================== -->
+    <!-- MODAL AGREGAR -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalAgregarFarmacia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nueva Farmacia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" #cerrarAgregar>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="f.form.valid 
+                    && model.cuitFarmacia && model.nombreFarmacia
+                    && model.direccionFarmacia && model.telefonoFarmacia
+                    && model.emailFarmacia
+                    
+                    && cargarFarmacia(f);" #f="ngForm" novalidate>
+                    <div class="modal-body">
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="cuitFarmacia">CUIT:</label>
+                            <input type="text" class="form-control" name="cuitFarmacia" [(ngModel)]="model.cuitFarmacia"
+                                #cuitFarmacia="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="model.cuitFarmacia && validarCuit()" severity="error" text="Cuit Inválido."></p-message>
+                            <p-message *ngIf="f.submitted && !model.cuitFarmacia" severity="error" text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="nombreFarmacia">Nombre:</label>
+                            <input type="text" class="form-control" name="nombreFarmacia" [(ngModel)]="model.nombreFarmacia"
+                                #nombreFarmacia="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.nombreFarmacia" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="direccionFarmacia">Direccion:</label>
+                            <input type="text" class="form-control" name="direccionFarmacia" [(ngModel)]="model.direccionFarmacia"
+                                #direccionFarmacia="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.direccionFarmacia" severity="error"
+                                text="Campo Obligatorio."></p-message>
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="telefonoFarmacia">Telefono:</label>
+                            <input type="text" class="form-control" name="telefonoFarmacia" [(ngModel)]="model.telefonoFarmacia"
+                                #telefonoFarmacia="ngModel" autocomplete="off" required />
+                            <p-message *ngIf="f.submitted && !model.telefonoFarmacia" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+    
+                        <div class="form-group required">
+                            <label class="control-label" for="emailFarmacia">Email:</label>
+                            <input type="text" class="form-control" name="emailFarmacia"
+                                [(ngModel)]="model.emailFarmacia" #emailFarmacia="ngModel" autocomplete="off"
+                                required />
+                            <p-message *ngIf="f.submitted && !model.emailFarmacia" severity="error"
+                                text="Campo Obligatorio."></p-message>
+    
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button pButton class="ui-button-rounded ui-button-success" label="Aceptar" icon="fas fa-check"
+                            type="submit">
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

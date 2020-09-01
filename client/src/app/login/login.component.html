@@ -1,0 +1,21 @@
+<div class="d-flex align-items-center justify-content-center bg-br-primary ht-100v" style="padding-bottom: 15%;">
+  <div class="login-wrapper wd-300 wd-xs-350 pd-25 pd-xs-40 bg-white rounded shadow-base">
+    <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-10"><span class="tx-normal">[</span> MEDICORP
+      <span class="tx-normal">]</span></div>
+    <div class="tx-center mg-b-30">Por favor, ingrese sus datos de usuario</div>
+
+    <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Usuario" name="username" [(ngModel)]="model.username"
+          #username="ngModel" required autocomplete="off">
+        <div *ngIf="f.submitted && !username.valid" class="help-block">Usuario incorrecto</div>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" placeholder="Contraseña" name="password"
+          [(ngModel)]="model.password" #password="ngModel">
+        <div *ngIf="f.submitted && !password.valid" class="help-block">Contraseña incorrecta</div>
+      </div>
+      <button type="submit" class="btn btn-info btn-block">Iniciar Sesion</button>
+    </form>
+  </div>
+</div>
