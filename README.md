@@ -3,6 +3,6 @@ Este proyecto tiene como funcionalidad asistir a la gestion de una empresa local
 Esta desarrollado con full stack MEAN.
 
 Para ejecturarlo:
-  - Descargar y npm i
+  - Descargar y ejecutar npm i
   - Correr el servidor con ng start
   - Correr la aplicacion we con ng serve
